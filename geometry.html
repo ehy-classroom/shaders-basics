@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Geometrie Beispiele</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav">
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="background.html">Farbe</a></li>
+      <li><a href="geometry.html" class="active">3D Formen</a></li>
+    </ul>
+  </nav>
+  <div class="info">
+    <h3>3D Geometrie Beispiele</h3>
+    <p>Oben: Würfel | Mitte: Kegel | Unten: Torus</p>
+  </div>
+  <canvas id="canvas"></canvas>
+
+  <script type="module">
+    import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js';
+
+    // Szene, Kamera, Renderer
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas') });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0xffffff);
+
+    // Licht für Shading (wird nur bei Lambert-Material verwendet)
+    const ambientLight = new THREE.AmbientLight(new THREE.Color().setHSL(200, 0.5, 0.9), 0.4);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(new THREE.Color().setHSL(0, 0, 1.0), 0.8);
+    directionalLight.position.set(5, 5, 5);
+    scene.add(directionalLight);
+
+    // 1. Würfel (oben)
+    const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+    // const cubeMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(0.5, 0.5, 0.5), wireframe: true });
+    const cubeMaterial = new THREE.MeshLambertMaterial({ color: new THREE.Color().setHSL(0.5, 0.5, 0.5) });
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube.position.y = 2.5;
+    cube.rotation.x = 0.1745;
+    cube.rotation.y = 0.1745;
+    cube.rotation.z = 0.1745;
+    scene.add(cube);
+
+    // 2. Kegel (mitte)
+    const coneGeometry = new THREE.ConeGeometry(0.7, 1.5, 15);
+    // const coneMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(0, 0, 0), wireframe: true });
+    const coneMaterial = new THREE.MeshLambertMaterial({ color: new THREE.Color().setHSL(0, 0, 0.5) });
+    const cone = new THREE.Mesh(coneGeometry, coneMaterial);
+    cone.position.y = 0;
+    cone.rotation.x = 0.1745;
+    cone.rotation.y = 0.1745;
+    cone.rotation.z = 0.1745;
+    scene.add(cone);
+
+    // 3. Torus (unten)
+    const torusGeometry = new THREE.TorusGeometry(0.7, 0.3, 16, 10);
+    const torusMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color().setHSL(0, 0, 0), wireframe: true });
+    // const torusMaterial = new THREE.MeshLambertMaterial({ color: new THREE.Color().setHSL(0, 0, 0.5) }); // Auskommentieren für graues Shading
+    const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+    torus.position.y = -2.5;
+    torus.rotation.x = 0.1745;
+    torus.rotation.y = 0.5236;
+    torus.rotation.z = 0.1745;
+    scene.add(torus);
+
+    // Kamera positionieren
+    camera.position.z = 5;
+
+    // Einmaliges Rendern (keine Animation)
+    renderer.render(scene, camera);
+
+    // Bei Fenstergrößenänderung
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.render(scene, camera);
+    });
+  </script>
+</body>
+</html>
